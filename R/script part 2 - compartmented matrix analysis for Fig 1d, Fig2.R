@@ -182,8 +182,11 @@ legend(26,3, legend=paste0(
 
 
 
+# -------------------------------------------------------------------------------------
+#            SEE THE FOLLOWING TEXT FOR DISCUSSION OF PLOTS OF AFFINITY
+#            VERSUS NUMBER OF OCCUPIED SITES AS GIVEN IN USSG FIG 1(C)
+# -------------------------------------------------------------------------------------
 
-#-------------------------------------------------------------------------
 # First of all, note that the Number of Sites on the x-axes of Fig1(a) and of Fig1(c) of USSG commentary mean somewhat different things.
 # In Fig.1(a), the number of sites is simply the table-total N in the 2x2 species-pair contingency table of occurrences,
 # i.e., the total number of ecologic sites at which occurrence of species A and B are recorded.
