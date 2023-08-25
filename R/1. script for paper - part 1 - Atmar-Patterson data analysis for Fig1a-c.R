@@ -2,8 +2,8 @@ rm(list = ls())
 
 library(CooccurrenceAffinity)
 library(ggplot2)
+library(BiasedUrn)
 
-# the following functions comb(), cooc() and veech_p() were copied from https://github.com/giovannistrona/co_occurrence
 comb <- function(n, k){
   if (k > n) return(0)
   if (suppressWarnings(is.infinite(factorial(n))) || suppressWarnings(is.infinite(factorial(k)))){
@@ -34,13 +34,12 @@ veech_p<-function(N,N1,N2,obs){
 }
 
 
+setwd("/Users/kpmainali/Dropbox/Documents/RESEARCH/Cooccurrence_SA_Paper_Commentary_Response/github_giovannistrona")
 
-# load Atmar_Patterson data copied from https://github.com/giovannistrona/co_occurrence
-load("data/Atmar_Patterson_Matrices.RData")
+load("Atmar_Patterson_Matrices.RData")
 ap_data<-data.Atmar
 
 res_veech<-c()
-# the following for loop and some codes elsewhere were copied from https://github.com/giovannistrona/co_occurrence
 for (m in 1:length(ap_data)){
   mat<-ap_data[[m]]
   R<-nrow(mat)
@@ -81,7 +80,7 @@ for (m in 1:length(ap_data)){
 
 head(res_veech)
 nrow(res_veech)
-colnames(res_veech)<-c('N1','N2','X','site_n','alphaMLE','Veech_p')
+colnames(res_veech) <- c('N1','N2','X','site_n','alphaMLE','Veech_p')
 res_veech<-res_veech[is.finite(rowSums(res_veech)),]
 
 head(res_veech)
@@ -99,6 +98,8 @@ phyper(6, 7, 18-7, 16) # cumulative prob of up to 6 co-occurrences, including 6
 1-phyper((6-1), 7, 18-7, 16)
 # this is what p_gt is in veech's cooccur function, reported by Ulrich et al as pv or Veech's probability
 
+# veech_p(site_n,N1,N2,X)
+veech_p(18, 7, 16, 6)$p
 
 
 
@@ -203,7 +204,10 @@ pie <- ggplot(piedata, aes(x="", y=value, fill=group)) +
   coord_polar("y", start=0) +
   theme_void() +
   theme(legend.position = "none")
-pie
+
+# pdf("/Users/kpmainali/Google Drive/Documents/RESEARCH/Cooccurrence_SA_Paper_Commentary_Response/plots/pie.pdf", width = 1, height = 1)
+#   pie
+# dev.off()
 
 mypiecols <- c("#00BA38", "#619CFF", "#F8766D")
 pie <- ggplot(piedata, aes(x="", y=value, fill=group)) +
@@ -213,7 +217,10 @@ pie <- ggplot(piedata, aes(x="", y=value, fill=group)) +
   coord_polar("y", start=0) +
   theme_void() +
   theme(legend.position = "none")
-pie
+
+# pdf("/Users/kpmainali/Google Drive/Documents/RESEARCH/Cooccurrence_SA_Paper_Commentary_Response/plots/pie_alt.pdf", width = 1, height = 1)
+#   pie
+# dev.off()
 
 
 
@@ -260,10 +267,12 @@ colnames(out_mat_neginf) <- c("alpha_mle", "Blaker_CI_upperpt")
 nrow(out_mat_neginf)
 
 
+plot(res_veech_posinf[,6], out_mat_posinf[,2], xlab="Veech_p", ylab="End point of Blaker CI of Alpha MLE", col='red',
+     ylim = range(c(out_mat_posinf[,2], out_mat_neginf[,2])), xlim=c(0,1))
+points(res_veech_neginf[,6], out_mat_neginf[,2], col='purple')
+
 
 # ============= Fig 1c =============
 
 plot(res_veech_posinf[,6], out_mat_posinf[,2], xlab="Veech_p", ylab="End point of Blaker CI of Alpha MLE", col='red',
      ylim = range(c(out_mat_posinf[,2], out_mat_neginf[,2])), xlim=c(0,1))
-points(res_veech_neginf[,6], out_mat_neginf[,2], col='purple')
-

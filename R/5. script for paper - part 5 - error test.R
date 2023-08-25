@@ -1,13 +1,24 @@
 library(BiasedUrn)
 library(CooccurrenceAffinity)
 
+
+rm(list = ls())
+
 # the following three functions should be obtained from the Science Advances paper SI
 # (under "Auxiliary Supplementary Materials and Other Supporting Files").
 # dowloaded from https://www.science.org/doi/10.1126/sciadv.abj9204
 # the functions have also been uploaded to this GitHub repo.
-AlphInt <- dget("R/ScienceAdvances_functions/AlphInt function.R")
-AlphMLE <- dget("R/ScienceAdvances_functions/AlphMLE.R")
-NewAlph <- dget("R/ScienceAdvances_functions/NewAlph.R")
+
+# AlphInt <- dget("R/ScienceAdvances_functions/AlphInt function.R")
+# AlphMLE <- dget("R/ScienceAdvances_functions/AlphMLE.R")
+# NewAlph <- dget("R/ScienceAdvances_functions/NewAlph.R")
+
+# Alternatively, you can directly access the functions from the GitHub
+devtools::source_url("https://raw.githubusercontent.com/kpmainali/Affinity_JBiogeo_Rejoinder/main/R/ScienceAdvances_functions/AlphInt%20function.R")
+devtools::source_url("https://raw.githubusercontent.com/kpmainali/Affinity_JBiogeo_Rejoinder/main/R/ScienceAdvances_functions/AlphMLE.R")
+devtools::source_url("https://raw.githubusercontent.com/kpmainali/Affinity_JBiogeo_Rejoinder/main/R/ScienceAdvances_functions/NewAlph.R")
+
+ls()
 
 # USSG indicated correctly in their GitHub that following computation fails.
 NewAlph(4, mA=7, mB=10, N=20)$AlphMLE
@@ -32,8 +43,13 @@ ML.Alpha(4, c(7, 10, 20))
 
 # As we show below, our package function does NOT fail for those input values.
 
-erdf <- read.csv("data/error_parameters_locked.csv"); erdf
+# erdf <- read.csv("data/error_parameters_locked.csv"); erdf
 
+# Alternatively, directly load it from GitHub
+url <- "https://raw.githubusercontent.com/kpmainali/Affinity_JBiogeo_Rejoinder/main/data/error_parameters_locked.csv"
+erdf <- read.csv(url)
+
+nrow(erdf)
 for(i in 1:nrow(erdf)) {
   X <- erdf$cooccurrence[i]
   mA <- erdf$entityAfreq[i]

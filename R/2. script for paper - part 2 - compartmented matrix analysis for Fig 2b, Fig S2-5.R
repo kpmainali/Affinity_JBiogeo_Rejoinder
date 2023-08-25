@@ -1,4 +1,36 @@
-# load the libraries and some functions at the beginning of script part 1 first
+library(CooccurrenceAffinity)
+library(ggplot2)
+
+comb <- function(n, k){
+  if (k > n) return(0)
+  if (suppressWarnings(is.infinite(factorial(n))) || suppressWarnings(is.infinite(factorial(k)))){
+    x <- gmp::factorialZ(n) %/% gmp::factorialZ(k) %/% gmp::factorialZ(n - k)
+    x <- as.numeric(x)
+    if(is.infinite(x)) stop("n and/or k is too large for the internal comb function; there are likely too many species", "\n",
+                            "in the dataset for calculations to be possible")
+  } else{
+    x <- factorial(n) / factorial (k) / factorial(n - k)
+  }
+  return(x)
+}
+
+cooc <- function(j, N, N1, N2){
+  a <- comb(N1, j)
+  b <- comb( (N - N1), (N2 - j))
+  d <- comb(N, N2)
+  return( (a * b) / d)
+}
+
+veech_p<-function(N,N1,N2,obs){
+  p<-0
+  for (i in obs:min(N1,N2)){
+    pc<-cooc(i,N,N1,N2)
+    p<-p+pc
+  }
+  return (list('p'=p))
+}
+
+
 
 
 # An artificial matrix of 22 species occupying various number of 50 sites
@@ -6,9 +38,10 @@
 
 # compartmented matrix used in USSG's Fig 1B, C
 
+setwd("/Users/kpmainali/Dropbox/Documents/RESEARCH/Cooccurrence_SA_Paper_Commentary_Response/github_giovannistrona")
 par(mfrow=c(3,4))
 
-mat_file <- 'data/compartmented.csv'
+mat_file <- 'compartmented.csv'
 mat <- t(read.csv(mat_file,header=T,row.names=1)) # 50 x 22 -- Commentary says 22 species, 50 sites
 head(mat)
 
@@ -92,7 +125,7 @@ for(i in 1:231) {
   for(j in 1:4) Xarr[i,j,3] = ML.Alpha(Xarr[i,j,1],c(mA,mB,50))$est }
 
 
-# ============= Fig 1d =============
+# ============= Supp Fig S2 =============
 colrs=c("black","blue","red","orange")
 plot(1,2, xlab="Veech_p", ylab="Affinity", type="n", xlim=c(0,0.4), ylim=c(0.3,2),main=
        paste0("Plots of Affinity vs p_gt for X's from Different Alphas","\n",
@@ -112,7 +145,7 @@ plot( (Exmp1bc[,2]-null.mean)/null.sdev,Exmp1bc[,5], xlab="null-standardized Co-
       main="Affinity vs Null-Stdizd X \nin Artificial Compartmented-Matrix Data")
 
 
-# ============= Fig 2a =============
+# ============= Supp Fig S3 =============
 ## Affinity vs null-standardized cooccurrence
 ## in the settting of the four-color picture with X's generated as medians
 ## according to Extended Hypergeometric with four different alpha's
@@ -154,7 +187,7 @@ legend(26,3, legend=paste0("alpha=",round(log(c(2.0,2.75,3.5,4.25)),2),
                              round(summary(lmobj)$coef[3,4],4))),  lty=2, col=colrs)
 
 
-# ============= Fig 2c =============
+# ============= Fig 2b =============
 
 plot(c(Exmp1bc[,3]+Exmp1bc[,4]-Xarr[,,1]),c(Xarr[,,3]), xlab="Number of sites",
      ylab="Affinity", type="n", ylim=c(0.25, 3) )
@@ -182,11 +215,8 @@ legend(26,3, legend=paste0(
 
 
 
-# -------------------------------------------------------------------------------------
-#            SEE THE FOLLOWING TEXT FOR DISCUSSION OF PLOTS OF AFFINITY
-#            VERSUS NUMBER OF OCCUPIED SITES AS GIVEN IN USSG FIG 1(C)
-# -------------------------------------------------------------------------------------
 
+#-------------------------------------------------------------------------
 # First of all, note that the Number of Sites on the x-axes of Fig1(a) and of Fig1(c) of USSG commentary mean somewhat different things.
 # In Fig.1(a), the number of sites is simply the table-total N in the 2x2 species-pair contingency table of occurrences,
 # i.e., the total number of ecologic sites at which occurrence of species A and B are recorded.
@@ -238,7 +268,7 @@ for(i in 1:231) {
 
 
 
-# ============= Fig 2b =============
+# ============= Supp Fig S5 =============
 
 plot( (Exmp1bc[,"X"]-StdzArr[,1])/StdzArr[,2],
       (Exmp1bc[,"X"]/(Exmp1bc[,"mA"]+Exmp1bc[,"mB"]-Exmp1bc[,"X"])-
@@ -247,7 +277,7 @@ plot( (Exmp1bc[,"X"]-StdzArr[,1])/StdzArr[,2],
 
 
 
-# ============= Fig supplement =============
+# ============= Supp Fig S4 =============
 
 plot(0,0, xlab="Null-standardized Jaccard", ylab="Affinity",
      type="n", xlim=c(0.5,3.2), ylim=c(0.5,2), main=paste0(
@@ -258,3 +288,4 @@ for(j in 1:4)
            StdzArr[,4], Xarr[,j,3], pch=18, col=colrs[j])
 legend(0.5,2, legend=paste0("alpha=log(",c("2","2.75","3.5","4.25"),")"),
        pch=rep(18,4), col=colrs, cex=1)
+
