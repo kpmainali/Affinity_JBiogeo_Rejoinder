@@ -49,60 +49,32 @@ ML.Alpha(4, c(7, 10, 20))
 url <- "https://raw.githubusercontent.com/kpmainali/Affinity_JBiogeo_Rejoinder/main/data/error_parameters_locked.csv"
 erdf <- read.csv(url)
 
+
 nrow(erdf)
+cranfunction <- sciadvfunction <- c()
+
+# alpha estimate from CRAN function
 for(i in 1:nrow(erdf)) {
   X <- erdf$cooccurrence[i]
   mA <- erdf$entityAfreq[i]
   mB <- erdf$entityBfreq[i]
   N <- erdf$totalN[i]
 
-  print(paste("-----------------------", i, "-----------------------"))
-  print("output of NewAlph() from Science Advances paper supplement")
-  try({print(NewAlph(X, mA, mB, N)$AlphMLE)})
-  print("output of ML.Alph() from our R package CooccurrenceAffinity")
-  print(ML.Alpha(X, c(mA, mB, N))$est)
+  cranfunction <- c(cranfunction, ML.Alpha(X, c(mA, mB, N))$est)
+  if(i == nrow(erdf)) print(cranfunction)
 }
 
-# [1] "----------------------- 1 -----------------------"
-# [1] "output of NewAlph() from Science Advances paper supplement"
-# Error in pFNCHypergeo(t, mA, N - mA, mB, exp(alp[i])) :
-#   Inconsistency. mean = 32, lower limit = 27, upper limit = 19
-# [1] "output of ML.Alph() from our R package CooccurrenceAffinity"
-# [1] 0.2496686
-# [1] "----------------------- 2 -----------------------"
-# [1] "output of NewAlph() from Science Advances paper supplement"
-# Error in pFNCHypergeo(t, mA, N - mA, mB, exp(alp[i])) :
-#   Inconsistency. mean = 8, lower limit = 4, upper limit = 1
-# [1] "output of ML.Alph() from our R package CooccurrenceAffinity"
-# [1] -0.8133189
-# [1] "----------------------- 3 -----------------------"
-# [1] "output of NewAlph() from Science Advances paper supplement"
-# Error in pFNCHypergeo(t, mA, N - mA, mB, exp(alp[i])) :
-#   Inconsistency. mean = 16, lower limit = 0, upper limit = 7
-# [1] "output of ML.Alph() from our R package CooccurrenceAffinity"
-# [1] 0.4196029
-# [1] "----------------------- 4 -----------------------"
-# [1] "output of NewAlph() from Science Advances paper supplement"
-# Error in pFNCHypergeo(t, mA, N - mA, mB, exp(alp[i])) :
-#   Inconsistency. mean = 64, lower limit = 61, upper limit = 39
-# [1] "output of ML.Alph() from our R package CooccurrenceAffinity"
-# [1] -0.1486402
-# [1] "----------------------- 5 -----------------------"
-# [1] "output of NewAlph() from Science Advances paper supplement"
-# Error in pFNCHypergeo(t, mA, N - mA, mB, exp(alp[i])) :
-#   Inconsistency. mean = 0, lower limit = 10, upper limit = 15
-# [1] "output of ML.Alph() from our R package CooccurrenceAffinity"
-# [1] 0.4693939
-# [1] "----------------------- 6 -----------------------"
-# [1] "output of NewAlph() from Science Advances paper supplement"
-# Error in pFNCHypergeo(t, mA, N - mA, mB, exp(alp[i])) :
-#   Inconsistency. mean = 16, lower limit = 15, upper limit = 12
-# [1] "output of ML.Alph() from our R package CooccurrenceAffinity"
-# [1] 0.7563251
-# [1] "----------------------- 7 -----------------------"
-# [1] "output of NewAlph() from Science Advances paper supplement"
-# Error in pFNCHypergeo(t, mA, N - mA, mB, exp(alp[i])) :
-#   Inconsistency. mean = 32, lower limit = 31, upper limit = 18
-# [1] "output of ML.Alph() from our R package CooccurrenceAffinity"
-# [1] 0.4570275
+# alpha estimate from Science Advances function
+for(i in 1:nrow(erdf)) {
+  X <- erdf$cooccurrence[i]
+  mA <- erdf$entityAfreq[i]
+  mB <- erdf$entityBfreq[i]
+  N <- erdf$totalN[i]
+
+  sciadvfunction <- c(sciadvfunction, NewAlph(X, mA, mB, N)$AlphMLE)
+  if(i == nrow(erdf)) print(sciadvfunction)
+}
+
+# compare the alpha outputs from CRAN vs Science Advances functions
+df <- cbind(cranfunction, sciadvfunction); df
 
